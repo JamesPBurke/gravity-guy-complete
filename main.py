@@ -7,6 +7,14 @@ def on_left_pressed():
     pass
 controller.left.on_event(ControllerButtonEvent.PRESSED, on_left_pressed)
 
+def on_overlap_tile(sprite, location):
+    sprite.say_text(location, 5000, False)
+scene.on_overlap_tile(SpriteKind.player,
+    assets.tile("""
+        myTile3
+    """),
+    on_overlap_tile)
+
 def on_right_pressed():
     pass
 controller.right.on_event(ControllerButtonEvent.PRESSED, on_right_pressed)
@@ -38,33 +46,94 @@ movespeed = 80
 mySprite.ay = 400
 mySprite.fx += 100
 scene.camera_follow_sprite(mySprite)
-animating = 'none'
+animating = 0
+save_it = 0
 
 def on_on_update():
     global animating
     if controller.left.is_pressed():
-        mySprite.set_image(img("""
-            . . . . . . . . . . . . . . . . 
-                        . . . . . f f f f f f . . . . . 
-                        . . . . f 2 f e e e e f f . . . 
-                        . . . f 2 2 2 f e e e e f f . . 
-                        . . . f e e e e f f e e e f . . 
-                        . . f e 2 2 2 2 e e f f f f . . 
-                        . . f 2 e f f f f 2 2 2 e f . . 
-                        . . f f f e e e f f f f f f f . 
-                        . . f e e 4 4 f b e 4 4 e f f . 
-                        . . . f e d d f 1 4 d 4 e e f . 
-                        . . . . f d d d e e e e e f . . 
-                        . . . . f e 4 e d d 4 f . . . . 
-                        . . . . f 2 2 e d d e f . . . . 
-                        . . . f f 5 5 f e e f f f . . . 
-                        . . . f f f f f f f f f f . . . 
-                        . . . . f f f . . . f f . . . .
-        """))
+        if animating != 1:
+            animating = 1
+            animation.run_image_animation(mySprite,
+                [img("""
+                        . . . . f f f f f f . . . . . . 
+                                        . . . f 2 f e e e e f f . . . . 
+                                        . . f 2 2 2 f e e e e f f . . . 
+                                        . . f e e e e f f e e e f . . . 
+                                        . f e 2 2 2 2 e e f f f f . . . 
+                                        . f 2 e f f f f 2 2 2 e f . . . 
+                                        . f f f e e e f f f f f f f . . 
+                                        . f e e 4 4 f b e 4 4 e f f . . 
+                                        . . f e d d f 1 4 d 4 e e f . . 
+                                        . . . f d d d d 4 e e e f . . . 
+                                        . . . f e 4 4 4 e e f f . . . . 
+                                        . . . f 2 2 2 e d d 4 . . . . . 
+                                        . . . f 2 2 2 e d d e . . . . . 
+                                        . . . f 5 5 4 f e e f . . . . . 
+                                        . . . . f f f f f f . . . . . . 
+                                        . . . . . . f f f . . . . . . .
+                    """),
+                    img("""
+                        . . . . . . . . . . . . . . . . 
+                                        . . . . f f f f f f . . . . . . 
+                                        . . . f 2 f e e e e f f . . . . 
+                                        . . f 2 2 2 f e e e e f f . . . 
+                                        . . f e e e e f f e e e f . . . 
+                                        . f e 2 2 2 2 e e f f f f . . . 
+                                        . f 2 e f f f f 2 2 2 e f . . . 
+                                        . f f f e e e f f f f f f f . . 
+                                        . f e e 4 4 f b e 4 4 e f f . . 
+                                        . . f e d d f 1 4 d 4 e e f . . 
+                                        . . . f d d d e e e e e f . . . 
+                                        . . . f e 4 e d d 4 f . . . . . 
+                                        . . . f 2 2 e d d e f . . . . . 
+                                        . . f f 5 5 f e e f f f . . . . 
+                                        . . f f f f f f f f f f . . . . 
+                                        . . . f f f . . . f f . . . . .
+                    """),
+                    img("""
+                        . . . . f f f f f f . . . . . . 
+                                        . . . f 2 f e e e e f f . . . . 
+                                        . . f 2 2 2 f e e e e f f . . . 
+                                        . . f e e e e f f e e e f . . . 
+                                        . f e 2 2 2 2 e e f f f f . . . 
+                                        . f 2 e f f f f 2 2 2 e f . . . 
+                                        . f f f e e e f f f f f f f . . 
+                                        . f e e 4 4 f b e 4 4 e f f . . 
+                                        . . f e d d f 1 4 d 4 e e f . . 
+                                        . . . f d d d d 4 e e e f . . . 
+                                        . . . f e 4 4 4 e e f f . . . . 
+                                        . . . f 2 2 2 e d d 4 . . . . . 
+                                        . . . f 2 2 2 e d d e . . . . . 
+                                        . . . f 5 5 4 f e e f . . . . . 
+                                        . . . . f f f f f f . . . . . . 
+                                        . . . . . . f f f . . . . . . .
+                    """),
+                    img("""
+                        . . . . . . . . . . . . . . . . 
+                                        . . . . f f f f f f . . . . . . 
+                                        . . . f 2 f e e e e f f . . . . 
+                                        . . f 2 2 2 f e e e e f f . . . 
+                                        . . f e e e e f f e e e f . . . 
+                                        . f e 2 2 2 2 e e f f f f . . . 
+                                        . f 2 e f f f f 2 2 2 e f . . . 
+                                        . f f f e e e f f f f f f f . . 
+                                        . f e e 4 4 f b e 4 4 e f f . . 
+                                        . . f e d d f 1 4 d 4 e e f . . 
+                                        . . . f d d d d 4 e e e f . . . 
+                                        . . . f e 4 4 4 e d d 4 . . . . 
+                                        . . . f 2 2 2 2 e d d e . . . . 
+                                        . . f f 5 5 4 4 f e e f . . . . 
+                                        . . f f f f f f f f f f . . . . 
+                                        . . . f f f . . . f f . . . . .
+                    """)],
+                200,
+                True)
         if abs(mySprite.vx) < 50:
             mySprite.vx = movespeed * -1
     elif controller.right.is_pressed():
-        if animating != 'right':
+        if animating != 2:
+            animating = 2
             animation.run_image_animation(mySprite,
                 [img("""
                         . . . . . . f f f f f f . . . . 
@@ -138,7 +207,7 @@ def on_on_update():
                                         . . . . f f f f f f f f f f . . 
                                         . . . . . f f . . . f f f . . .
                     """)],
-                500,
+                200,
                 True)
         if abs(mySprite.vx) < 50:
             mySprite.vx = movespeed

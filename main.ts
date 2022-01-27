@@ -1,15 +1,34 @@
+function setPhysicsOn () {
+    mySprite.ay = 400
+    mySprite.fx += 100
+}
+function setPhysicsOff () {
+    mySprite.ay = 0
+    mySprite.vy = 0
+    mySprite.fx += 0
+}
+controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+	
+})
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (mySprite.isHittingTile(CollisionDirection.Bottom)) {
         mySprite.vy = -200
     }
+    flag_hit = 0
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
 	
 })
-controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-	
+scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile3`, function (sprite, location) {
+    if (flag_hit == 0) {
+        sprite.sayText(232 - sprite.y, 2000, false)
+        flag_hit = 232 - sprite.y
+    }
 })
+let animating = 0
+let flag_hit = 0
 let mySprite: Sprite = null
+let save_it = 0
 mySprite = sprites.create(img`
     . . . . . . f f f f . . . . . . 
     . . . . f f f 2 2 f f f . . . . 
@@ -30,11 +49,9 @@ mySprite = sprites.create(img`
     `, SpriteKind.Player)
 tiles.setTilemap(tilemap`level1`)
 let movespeed = 80
-mySprite.ay = 400
-mySprite.fx += 100
+setPhysicsOn()
 scene.cameraFollowSprite(mySprite)
-let animating = 0
-let save_it = 0
+flag_hit = 0
 game.onUpdate(function () {
     if (controller.left.isPressed()) {
         if (animating != 1) {
